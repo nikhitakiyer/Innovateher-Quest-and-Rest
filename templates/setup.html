@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Player Setup - Quest & Rest</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #bdbbf1;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .setup-container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .player-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+        }
+
+        h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .icon-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .icon-option {
+            font-size: 40px;
+            padding: 10px;
+            border: 3px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .icon-option:hover {
+            transform: scale(1.1);
+        }
+
+        .icon-option.selected {
+            border-color: #667eea;
+            background: #e0e7ff;
+        }
+
+        button {
+            width: 100%;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="setup-container">
+        <h1>👥 Player Setup</h1>
+
+        <form id="setupForm">
+            <!-- Player 1 -->
+            <div class="player-section">
+                <h3>Player 1 🟢</h3>
+                <label>Name:</label>
+                <input type="text" id="player1-name" placeholder="Enter Player 1 name" required>
+
+                <label>Choose Your Icon:</label>
+                <div class="icon-selector">
+                    <div class="icon-option" onclick="selectIcon(1, '🌟')">🌟</div>
+                    <div class="icon-option" onclick="selectIcon(1, '🍕')">🍕</div>
+                    <div class="icon-option" onclick="selectIcon(1, '🌈')">🌈</div>
+                    <div class="icon-option" onclick="selectIcon(1, '💎')">💎</div>
+                </div>
+                <input type="hidden" id="player1-icon" value="🌟">
+            </div>
+
+            <!-- Player 2 -->
+            <div class="player-section">
+                <h3>Player 2 🔵</h3>
+                <label>Name:</label>
+                <input type="text" id="player2-name" placeholder="Enter Player 2 name" required>
+
+                <label>Choose Your Icon:</label>
+                <div class="icon-selector">
+                    <div class="icon-option" onclick="selectIcon(2, '🌟')">🌟</div>
+                    <div class="icon-option" onclick="selectIcon(2, '🍕')">🍕</div>
+                    <div class="icon-option" onclick="selectIcon(2, '🌈')">🌈</div>
+                    <div class="icon-option" onclick="selectIcon(2, '💎')">💎</div>
+                </div>
+                <input type="hidden" id="player2-icon" value="💎">
+            </div>
+
+            <button type="submit">Start Playing! 🎲</button>
+        </form>
+    </div>
+
+    <script>
+        // Icon selection
+        function selectIcon(player, icon) {
+            // Remove previous selection
+            document.querySelectorAll('.player-section').forEach((section, index) => {
+                if (index + 1 === player) {
+                    section.querySelectorAll('.icon-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                }
+            });
+
+            // Add selection to clicked icon
+            event.target.classList.add('selected');
+
+            // Save icon
+            document.getElementById(`player${player}-icon`).value = icon;
+        }
+
+        // Set default selections
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('.player-section:nth-child(2) .icon-option:first-child').classList.add('selected');
+            document.querySelector('.player-section:nth-child(3) .icon-option:first-child').classList.add('selected');
+        });
+
+        // Form submission
+        document.getElementById('setupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const player1 = {
+                name: document.getElementById('player1-name').value,
+                icon: document.getElementById('player1-icon').value
+            };
+
+            const player2 = {
+                name: document.getElementById('player2-name').value,
+                icon: document.getElementById('player2-icon').value
+            };
+
+            // Save to localStorage
+            localStorage.setItem('player1', JSON.stringify(player1));
+            localStorage.setItem('player2', JSON.stringify(player2));
+
+            // Go to game page
+            window.location.href = '/game';
+        });
+    </script>
+</body>
+</html>
