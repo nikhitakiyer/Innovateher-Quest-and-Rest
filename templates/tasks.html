@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Your Tasks - Quest & Rest</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .players-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .player-panel {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+        }
+
+        .player-header {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .player1-header {
+            background: #667eea;
+        }
+
+        .player2-header {
+            background: #f5576c;
+        }
+
+        .task-form {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .add-btn {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .add-btn:hover {
+            background: #5568d3;
+        }
+
+        .task-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .task-item {
+            background: white;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .task-priority {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+
+        .priority-high {
+            background: #fee;
+            color: #c00;
+        }
+
+        .priority-medium {
+            background: #fef3cd;
+            color: #856404;
+        }
+
+        .priority-low {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .start-game-btn {
+            width: 100%;
+            padding: 20px;
+            background: #48bb78;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 30px;
+        }
+
+        .start-game-btn:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+        }
+
+        .start-game-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .instruction {
+            text-align: center;
+            color: #666;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Add Your Tasks</h1>
+        <p class="subtitle">Add at least 3 tasks per player to start the game!</p>
+
+        <div class="players-section">
+            <!-- Player 1 -->
+            <div class="player-panel">
+                <div class="player-header player1-header">
+                    <span id="player1-icon">🌟</span>
+                    <span id="player1-name">Player 1</span>
+                </div>
+
+                <div class="task-form">
+                    <div class="form-group">
+                        <label>Task Description:</label>
+                        <input type="text" id="p1-task" placeholder="e.g., Finish homework">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Priority:</label>
+                        <select id="p1-priority">
+                            <option value="low">🟢 Low (5 pts)</option>
+                            <option value="medium" selected>🟡 Medium (10 pts)</option>
+                            <option value="high">🔴 High (15 pts)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Due Date:</label>
+                        <select id="p1-due">
+                            <option value="today">📅 Today</option>
+                            <option value="this_week" selected>📆 This Week</option>
+                            <option value="later">📋 Later</option>
+                        </select>
+                    </div>
+
+                    <button class="add-btn" onclick="addTask(1)">+ Add Task</button>
+                </div>
+
+                <div class="task-list" id="p1-tasks">
+                    <!-- Tasks will appear here -->
+                </div>
+            </div>
+
+            <!-- Player 2 -->
+            <div class="player-panel">
+                <div class="player-header player2-header">
+                    <span id="player2-icon">💎</span>
+                    <span id="player2-name">Player 2</span>
+                </div>
+
+                <div class="task-form">
+                    <div class="form-group">
+                        <label>Task Description:</label>
+                        <input type="text" id="p2-task" placeholder="e.g., Reply to emails">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Priority:</label>
+                        <select id="p2-priority">
+                            <option value="low">🟢 Low (5 pts)</option>
+                            <option value="medium" selected>🟡 Medium (10 pts)</option>
+                            <option value="high">🔴 High (15 pts)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Due Date:</label>
+                        <select id="p2-due">
+                            <option value="today">📅 Today</option>
+                            <option value="this_week" selected>📆 This Week</option>
+                            <option value="later">📋 Later</option>
+                        </select>
+                    </div>
+
+                    <button class="add-btn" onclick="addTask(2)">+ Add Task</button>
+                </div>
+
+                <div class="task-list" id="p2-tasks">
+                    <!-- Tasks will appear here -->
+                </div>
+            </div>
+        </div>
+
+        <button class="start-game-btn" id="start-btn" onclick="startGame()" disabled>
+            🎮 Start Playing!
+        </button>
+
+        <p class="instruction">Add tasks, then click "Start Playing" when ready!</p>
+    </div>
+
+    <script>
+        // Load player info
+        const player1 = JSON.parse(localStorage.getItem('player1')) || {name: 'Player 1', icon: '🌟'};
+        const player2 = JSON.parse(localStorage.getItem('player2')) || {name: 'Player 2', icon: '💎'};
+
+        document.getElementById('player1-name').textContent = player1.name;
+        document.getElementById('player1-icon').textContent = player1.icon;
+        document.getElementById('player2-name').textContent = player2.name;
+        document.getElementById('player2-icon').textContent = player2.icon;
+
+        let p1TaskCount = 0;
+        let p2TaskCount = 0;
+
+        // Add task
+        async function addTask(player) {
+            const taskInput = document.getElementById(`p${player}-task`);
+            const prioritySelect = document.getElementById(`p${player}-priority`);
+            const dueSelect = document.getElementById(`p${player}-due`);
+
+            const task = taskInput.value.trim();
+            if (!task) {
+                alert('Please enter a task!');
+                return;
+            }
+
+            const priority = prioritySelect.value;
+            const due = dueSelect.value;
+
+            // Save to database
+            try {
+                const response = await fetch('/api/add_task', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        player_id: player,
+                        description: task,
+                        priority: priority,
+                        due_date: due
+                    })
+                });
+
+                if (response.ok) {
+                    // Add to display
+                    const taskList = document.getElementById(`p${player}-tasks`);
+                    const taskItem = document.createElement('div');
+                    taskItem.className = 'task-item';
+                    taskItem.innerHTML = `
+                        ${task}
+                        <span class="task-priority priority-${priority}">${priority.toUpperCase()}</span>
+                    `;
+                    taskList.appendChild(taskItem);
+
+                    // Clear input
+                    taskInput.value = '';
+
+                    // Update count
+                    if (player === 1) p1TaskCount++;
+                    else p2TaskCount++;
+
+                    // Enable start button if both have 3+ tasks
+                    if (p1TaskCount >= 3 && p2TaskCount >= 3) {
+                        document.getElementById('start-btn').disabled = false;
+                    }
+                }
+            } catch (error) {
+                alert('Error adding task!');
+                console.error(error);
+            }
+        }
+
+        // Start game
+        function startGame() {
+            window.location.href = '/game';
+        }
+    </script>
+</body>
+</html>
