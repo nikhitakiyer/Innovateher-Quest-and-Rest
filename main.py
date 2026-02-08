@@ -43,6 +43,20 @@ def api_get_tasks(player_id):
     tasks = get_tasks(player_id)
     return jsonify({"tasks": tasks})
 
+# API: Complete task
+@app.route('/api/complete_task/<int:task_id>', methods=['POST'])
+def api_complete_task(task_id):
+    complete_task(task_id)
+    return jsonify({"status": "success"})
+
+# API: Update points
+@app.route('/api/update_points', methods=['POST'])
+def api_update_points():
+    data = request.json
+    update_points(data['player_id'], data['points'])
+    return jsonify({"status": "success"})
+
 if __name__ == '__main__':
     print("Quest & Rest Game Starting...")
     app.run(host='0.0.0.0', port=8080, debug=True)
+

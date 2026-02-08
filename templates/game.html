@@ -1,197 +1,246 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Quest & Rest - Game</title>
+    <title>Quest & Rest - Game Board</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
             font-family: 'Comic Sans MS', cursive, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
-
+        
         .game-container {
-            display: grid;
-            grid-template-columns: 1fr 2fr 1fr;
-            gap: 20px;
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            gap: 20px;
         }
-
-        /* Side Panels */
+        .start { border-color: #eab308;
+                 background: #fef9c3;
+                 font-weight: bold; }
+        
+        /* Player Panels */
         .player-panel {
             background: white;
             border-radius: 15px;
             padding: 20px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            height: fit-content;
         }
-
+        
         .player-header {
             text-align: center;
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 20px;
             color: white;
-            font-size: 24px;
+            font-size: 20px;
+            font-weight: bold;
         }
-
+        
         .player1-header {
             background: #667eea;
         }
-
+        
         .player2-header {
             background: #f5576c;
         }
-
-        .points {
+        
+        .points-display {
+            text-align: center;
             font-size: 48px;
             font-weight: bold;
-            text-align: center;
             color: #667eea;
             margin: 20px 0;
         }
-
-        .section {
-            margin-bottom: 20px;
-        }
-
-        .section h3 {
-            color: #667eea;
-            margin-bottom: 10px;
-            font-size: 18px;
-        }
-
-        .task-list {
-            max-height: 200px;
-            overflow-y: auto;
-            background: #f0f0f0;
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        .task-item {
-            padding: 8px;
-            margin-bottom: 5px;
-            background: white;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        .add-task-btn {
+        
+        .complete-task-btn {
             width: 100%;
             padding: 12px;
-            background: #667eea;
+            background: #48bb78;
             color: white;
             border: none;
             border-radius: 8px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 10px;
         }
-
-        .add-task-btn:hover {
-            background: #5568d3;
+        
+        .complete-task-btn:hover {
+            background: #38a169;
         }
-
-        .current-task {
-            background: #fff3cd;
-            padding: 15px;
-            border-radius: 10px;
-            border-left: 5px solid #ffc107;
-            margin-top: 15px;
+        
+        .waiting-message {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+            font-style: italic;
         }
-
-        /* Center Board */
-        .board-container {
+        
+        /* Center Board Area */
+        .board-area {
             background: white;
             border-radius: 15px;
             padding: 30px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.2);
         }
-
-        .game-title {
+        
+        .board-title {
             text-align: center;
             color: #667eea;
-            font-size: 32px;
+            font-size: 36px;
             margin-bottom: 20px;
         }
-
+        
+        .board-wrapper {
+            position: relative;
+            border: 4px solid #667eea;
+            border-radius: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+        }
+        
+        /* Rectangular Board */
         .board {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-            margin: 20px 0;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+            grid-template-rows: auto auto auto auto auto auto;
+            gap: 8px;
         }
-
+        
         .square {
-            aspect-ratio: 1;
+            min-height: 80px;
             border: 3px solid #667eea;
             border-radius: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 14px;
+            padding: 8px;
             position: relative;
             background: white;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
-
-        .square.mindfulness { border-color: #8b5cf6; background: #f3e8ff; }
-        .square.movement { border-color: #10b981; background: #d1fae5; }
-        .square.brain_break { border-color: #f59e0b; background: #fef3c7; }
-        .square.self_care { border-color: #ec4899; background: #fce7f3; }
-        .square.bonus { border-color: #eab308; background: #fef9c3; }
-
+        
+        .square:hover {
+            transform: scale(1.05);
+        }
+        
+        .square-icon {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
         .square-label {
             font-size: 10px;
-            margin-top: 5px;
             text-align: center;
+            line-height: 1.2;
         }
-
+        
+        /* Color coding for square types */
+        .mindfulness { border-color: #8b5cf6; background: #f3e8ff; }
+        .movement { border-color: #10b981; background: #d1fae5; }
+        .brain_break { border-color: #f59e0b; background: #fef3c7; }
+        .self_care { border-color: #ec4899; background: #fce7f3; }
+        
+        /* Player pieces */
         .player-piece {
             position: absolute;
+            font-size: 24px;
             top: 5px;
-            font-size: 20px;
+            animation: bounce 0.5s;
         }
-
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* Center area with logo */
+        .center-area {
+            grid-area: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            color: white;
+        }
+        
+        .center-logo {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .center-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .turn-indicator {
+            font-size: 18px;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+        }
+        
+        /* Dice Section */
         .dice-section {
             text-align: center;
-            margin: 30px 0;
+            margin-top: 30px;
         }
-
+        
         .dice-display {
             font-size: 72px;
             margin: 20px 0;
         }
-
+        
         .dice-btn {
             padding: 15px 40px;
             background: #667eea;
             color: white;
             border: none;
             border-radius: 10px;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
             cursor: pointer;
         }
-
+        
         .dice-btn:hover {
             background: #5568d3;
-            transform: scale(1.05);
         }
-
+        
         .dice-btn:disabled {
             background: #ccc;
             cursor: not-allowed;
         }
-
+        
+        /* Activity Popup */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 999;
+        }
+        
         .activity-popup {
             display: none;
             position: fixed;
@@ -206,17 +255,17 @@
             max-width: 500px;
             text-align: center;
         }
-
+        
         .activity-popup h2 {
             color: #667eea;
             margin-bottom: 20px;
         }
-
+        
         .activity-popup p {
             font-size: 20px;
             margin: 20px 0;
         }
-
+        
         .done-btn {
             padding: 15px 30px;
             background: #48bb78;
@@ -226,22 +275,10 @@
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 20px;
         }
-
+        
         .done-btn:hover {
             background: #38a169;
-        }
-
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 999;
         }
     </style>
 </head>
@@ -250,135 +287,163 @@
         <!-- Player 1 Panel -->
         <div class="player-panel">
             <div class="player-header player1-header">
-                <span id="player1-icon">🌟</span>
-                <span id="player1-name">Player 1</span>
+                <span id="p1-icon">🌟</span>
+                <span id="p1-name">Player 1</span>
             </div>
-
-            <div class="points" id="player1-points">0</div>
-
-            <div class="section">
-                <h3>📝 My Tasks</h3>
-                <div class="task-list" id="player1-tasks">
-                    <div class="task-item">No tasks yet!</div>
-                </div>
-                <button class="add-task-btn" onclick="addTask(1)">+ Add Task</button>
+            
+            <div class="points-display" id="p1-points">0</div>
+            
+            <div id="p1-task-area">
+                <div class="waiting-message">Waiting for task...</div>
             </div>
-
-            <div class="section">
-                <h3>✅ Completed Activities</h3>
-                <div id="player1-completed">0</div>
-            </div>
-
-            <div class="current-task" id="player1-current" style="display:none;">
-                <strong>Current Task:</strong>
-                <p id="player1-task-text"></p>
+            <div id="p1-activity-area" style="display:none;">
+                <!-- Activity will appear here -->
             </div>
         </div>
-
-        <!-- Game Board -->
-        <div class="board-container">
-            <h1 class="game-title">🎮 Quest & Rest</h1>
-
-            <div class="board" id="game-board">
-                <!-- Squares will be generated here -->
+        
+        <!-- Board Area -->
+        <div class="board-area">
+            <h1 class="board-title">Quest & Rest</h1>
+            
+            <div class="board-wrapper">
+                <div class="board" id="game-board">
+                    <!-- Board squares will be generated here -->
+                </div>
             </div>
-
+            
             <div class="dice-section">
                 <div class="dice-display" id="dice-display">🎲</div>
-                <button class="dice-btn" id="roll-btn" onclick="rollDice()">Roll Dice</button>
-                <p style="margin-top: 15px; color: #667eea; font-size: 18px;">
-                    <span id="current-turn">Player 1</span>'s Turn
-                </p>
+                <button class="dice-btn" id="roll-btn" onclick="rollDice()" disabled>
+                    Roll Dice
+                </button>
             </div>
         </div>
-
+        
         <!-- Player 2 Panel -->
         <div class="player-panel">
             <div class="player-header player2-header">
-                <span id="player2-icon">💎</span>
-                <span id="player2-name">Player 2</span>
+                <span id="p2-icon">💎</span>
+                <span id="p2-name">Player 2</span>
             </div>
-
-            <div class="points" id="player2-points">0</div>
-
-            <div class="section">
-                <h3>📝 My Tasks</h3>
-                <div class="task-list" id="player2-tasks">
-                    <div class="task-item">No tasks yet!</div>
-                </div>
-                <button class="add-task-btn" onclick="addTask(2)">+ Add Task</button>
+            
+            <div class="points-display" id="p2-points">0</div>
+            
+            <div id="p2-task-area">
+                <div class="waiting-message">Waiting for task...</div>
             </div>
-
-            <div class="section">
-                <h3>✅ Completed Activities</h3>
-                <div id="player2-completed">0</div>
-            </div>
-
-            <div class="current-task" id="player2-current" style="display:none;">
-                <strong>Current Task:</strong>
-                <p id="player2-task-text"></p>
+            <div id="p2-activity-area" style="display:none;">
+                <!-- Activity will appear here -->
             </div>
         </div>
     </div>
-
+    
     <!-- Activity Popup -->
     <div class="overlay" id="overlay"></div>
     <div class="activity-popup" id="activity-popup">
-        <h2 id="activity-title">Mindfulness</h2>
+        <h2 id="activity-title">Self-Care Activity</h2>
         <p id="activity-text">Take 5 deep breaths</p>
         <button class="done-btn" onclick="completeActivity()">✅ I Did It!</button>
     </div>
-
+    
     <script>
-        // Load player data
+        // Load player info
         const player1 = JSON.parse(localStorage.getItem('player1')) || {name: 'Player 1', icon: '🌟'};
         const player2 = JSON.parse(localStorage.getItem('player2')) || {name: 'Player 2', icon: '💎'};
-
-        document.getElementById('player1-name').textContent = player1.name;
-        document.getElementById('player1-icon').textContent = player1.icon;
-        document.getElementById('player2-name').textContent = player2.name;
-        document.getElementById('player2-icon').textContent = player2.icon;
-
+        
+        document.getElementById('p1-name').textContent = player1.name;
+        document.getElementById('p1-icon').textContent = player1.icon;
+        document.getElementById('p2-name').textContent = player2.name;
+        document.getElementById('p2-icon').textContent = player2.icon;
+        
         // Game state
         let currentPlayer = 1;
         let player1Position = 0;
         let player2Position = 0;
-        let player1Score = 0;
-        let player2Score = 0;
-
-        // Square types
-        const squareTypes = ['mindfulness', 'movement', 'brain_break', 'self_care', 'bonus'];
-        const squareIcons = {
-            'mindfulness': '🧘',
-            'movement': '🏃',
-            'brain_break': '🧠',
-            'self_care': '💆',
-            'bonus': '⭐'
-        };
-
-        // Generate board
+        
+        // Self-care activities
+        const activities = [
+            {type: 'start', icon: '🏁', text: 'START'},
+            {type: 'movement', icon: '🏃', text: 'Take a 15 minute walk outside'},
+            {type: 'movement', icon: '🏃', text: 'Do 10 jumping jacks'},
+            {type: 'movement', icon: '🏃', text: 'Stretch for 10 minutes'},
+            {type: 'mindfulness', icon: '🧘', text: 'Watch a funny video for 5 minutes'},
+            {type: 'self_care', icon: '💆', text: 'Eat a healthy snack'},
+            {type: 'mindfulness', icon: '🧘', text: 'Deep breathing for 1 minute'},
+            {type: 'brain_break', icon: '🧠', text: '60 Second desk cleanup'},
+            {type: 'brain_break', icon: '🧠', text: 'Listen to a podcast'},
+            {type: 'mindfulness', icon: '🧘', text: 'Practice positive affirmations'},
+            {type: 'self_care', icon: '💆', text: 'Drink a glass of water'},
+            {type: 'self_care', icon: '💆', text: 'Call a friend or family member'},
+            {type: 'self_care', icon: '💆', text: 'Journaling'},
+            {type: 'brain_break', icon: '🧠', text: 'Draw for 5 minutes'},
+            {type: 'self_care', icon: '💆', text: 'Cook a simple meal'},
+            {type: 'self_care', icon: '💆', text: 'Make a cup of coffee'},
+            {type: 'mindfulness', icon: '🧘', text: '1 minute dance party'},
+            {type: 'mindfulness', icon: '🧘', text: 'Step away from the desk and look outside the window for 30 seconds'},
+            {type: 'brain_break', icon: '🧠', text: 'Listen to your favorite song'},
+            {type: 'brain_break', icon: '🧠', text: 'Color for 5 minutes'},
+            {type: 'self_care', icon: '💆', text: 'Read 5 inspirational quotes'},
+            {type: 'brain_break', icon: '🧠', text: 'Do a simple puzzle game'},
+            {type: 'mindfulness', icon: '🧘', text: 'Close your eyes for 30 seconds'},
+            {type: 'self_care', icon: '💆', text: 'Grab a sweet treat'}
+        ];
+        
+        // Create board
         function createBoard() {
             const board = document.getElementById('game-board');
-            for (let i = 0; i < 25; i++) {
+
+            // 8×4 layout: 8 (top) + 4 (right) + 8 (bottom) + 4 (left) = 24
+            const layout = [
+                // Top row (8 squares) - positions 0-7
+                {row: 1, col: 1}, {row: 1, col: 2}, {row: 1, col: 3}, {row: 1, col: 4},
+                {row: 1, col: 5}, {row: 1, col: 6}, {row: 1, col: 7}, {row: 1, col: 8},
+
+                // Right column (4 squares) - positions 8-11
+                {row: 2, col: 8}, {row: 3, col: 8}, {row: 4, col: 8}, {row: 5, col: 8},
+
+                // Bottom row (8 squares, right to left) - positions 12-19
+                {row: 6, col: 8}, {row: 6, col: 7}, {row: 6, col: 6}, {row: 6, col: 5},
+                {row: 6, col: 4}, {row: 6, col: 3}, {row: 6, col: 2}, {row: 6, col: 1},
+
+                // Left column (4 squares, bottom to top) - positions 20-23
+                {row: 5, col: 1}, {row: 4, col: 1}, {row: 3, col: 1}, {row: 2, col: 1}
+            ];
+
+            for (let i = 0; i < activities.length; i++) {
+                const activity = activities[i];
                 const square = document.createElement('div');
-                const type = squareTypes[Math.floor(Math.random() * squareTypes.length)];
-                square.className = `square ${type}`;
-                square.innerHTML = `
-                    ${squareIcons[type]}
-                    <div class="square-label">${type.replace('_', ' ')}</div>
-                `;
+                square.className = `square ${activity.type}`;
                 square.id = `square-${i}`;
+                square.style.gridRow = layout[i].row;
+                square.style.gridColumn = layout[i].col;
+
+                square.innerHTML = `
+                    <div class="square-icon">${activity.icon}</div>
+                    <div class="square-label">${activity.text.substring(0, 30)}...</div>
+                `;
+
                 board.appendChild(square);
             }
+
+            // Add center area (spans middle cells)
+            const center = document.createElement('div');
+            center.style.gridRow = '2 / 6';
+            center.style.gridColumn = '2 / 8';
+            center.className = 'center-area';
+            center.innerHTML = `
+                <div class="center-logo">🎮</div>
+                <div class="center-title">Quest & Rest</div>
+                <div class="turn-indicator" id="turn-indicator"></div>
+            `;
+            board.appendChild(center);
+
             updateBoard();
         }
-
-        // Update player positions on board
+        
+        // Update player positions
         function updateBoard() {
-            // Clear existing pieces
             document.querySelectorAll('.player-piece').forEach(p => p.remove());
-
-            // Add player 1
+            
             const p1Square = document.getElementById(`square-${player1Position}`);
             if (p1Square) {
                 const piece = document.createElement('div');
@@ -387,8 +452,7 @@
                 piece.style.left = '5px';
                 p1Square.appendChild(piece);
             }
-
-            // Add player 2
+            
             const p2Square = document.getElementById(`square-${player2Position}`);
             if (p2Square) {
                 const piece = document.createElement('div');
@@ -398,95 +462,182 @@
                 p2Square.appendChild(piece);
             }
         }
-
+        
+        // Load tasks
+        async function loadTasks() {
+            try {
+                const p1Response = await fetch('/api/get_tasks/1');
+                const p1Data = await p1Response.json();
+                if (p1Data.tasks && p1Data.tasks.length > 0) {
+                    assignTask(1, p1Data.tasks);
+                }
+                
+                const p2Response = await fetch('/api/get_tasks/2');
+                const p2Data = await p2Response.json();
+                if (p2Data.tasks && p2Data.tasks.length > 0) {
+                    assignTask(2, p2Data.tasks);
+                }
+            } catch (error) {
+                console.error('Error loading tasks:', error);
+            }
+        }
+        
+        // Assign task to player
+        function assignTask(player, tasks) {
+            if (tasks.length === 0) return;
+            
+            const weights = tasks.map(task => {
+                let weight = 1;
+                if (task[3] === 'high') weight *= 3;
+                else if (task[3] === 'medium') weight *= 2;
+                if (task[4] === 'today') weight *= 3;
+                else if (task[4] === 'this_week') weight *= 2;
+                return weight;
+            });
+            
+            const totalWeight = weights.reduce((a, b) => a + b, 0);
+            let random = Math.random() * totalWeight;
+            
+            let selectedTaskIndex = 0;
+            for (let i = 0; i < tasks.length; i++) {
+                random -= weights[i];
+                if (random <= 0) {
+                    selectedTaskIndex = i;
+                    break;
+                }
+            }
+            
+            const selectedTask = tasks[selectedTaskIndex];
+            const points = {'high': 15, 'medium': 10, 'low': 5};
+            const taskArea = document.getElementById(`p${player}-task-area`);
+            let html = '<div style="max-height: 400px; overflow-y: auto;">';
+            
+            const currentPoints = points[selectedTask[3]];
+            html += `
+                <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; margin-bottom: 15px; border-radius: 8px;">
+                    <div style="font-weight: bold; color: #856404; margin-bottom: 5px;">⭐ CURRENT TASK</div>
+                    <div style="font-weight: bold; color: #333; margin-bottom: 5px; font-size: 16px;">${selectedTask[2]}</div>
+                    <div style="font-size: 12px; color: #666; margin-bottom: 10px;">${selectedTask[3].toUpperCase()} priority • ${currentPoints} pts</div>
+                    <button class="complete-task-btn" onclick="completeTask(${player}, ${selectedTask[0]}, ${currentPoints})">✅ Mark as Complete</button>
+                </div>
+            `;
+            
+            html += '<div style="border-top: 2px solid #ddd; padding-top: 10px;"><div style="font-size: 12px; color: #666; margin-bottom: 8px; font-weight: bold;">OTHER TASKS:</div>';
+            
+            tasks.forEach((task, index) => {
+                if (index !== selectedTaskIndex) {
+                    const taskPoints = points[task[3]];
+                    html += `
+                        <div style="background: #f8f9fa; border-left: 3px solid #ddd; padding: 10px; margin-bottom: 6px; border-radius: 6px;">
+                            <div style="font-size: 14px; color: #333; margin-bottom: 3px;">${task[2]}</div>
+                            <div style="font-size: 11px; color: #666;">${task[3].toUpperCase()} • ${taskPoints} pts</div>
+                        </div>
+                    `;
+                }
+            });
+            
+            html += '</div></div>';
+            taskArea.innerHTML = html;
+        }
+        
+        // Complete task
+        async function completeTask(player, taskId, points) {
+            try {
+                await fetch(`/api/complete_task/${taskId}`, {method: 'POST'});
+                await fetch('/api/update_points', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({player_id: player, points: points})
+                });
+                
+                const currentPoints = parseInt(document.getElementById(`p${player}-points`).textContent);
+                document.getElementById(`p${player}-points`).textContent = currentPoints + points;
+                document.getElementById(`p${player}-task-area`).innerHTML = 
+                    '<div class="waiting-message">✅ Task complete! You can roll the dice now.</div>';
+                
+                currentPlayer = player;
+                document.getElementById('roll-btn').disabled = false;
+                document.getElementById('turn-indicator').textContent = `${player === 1 ? player1.name : player2.name}'s Turn to Roll`;
+            } catch (error) {
+                console.error('Error completing task:', error);
+            }
+        }
+        
         // Roll dice
         function rollDice() {
             const roll = Math.floor(Math.random() * 6) + 1;
             document.getElementById('dice-display').textContent = roll;
-
-            // Move player
+            document.getElementById('roll-btn').disabled = true;
+            document.getElementById('turn-indicator').textContent = 'Complete your self-care activity!';
+            
             if (currentPlayer === 1) {
-                player1Position = Math.min(player1Position + roll, 24);
+                player1Position = (player1Position + roll) % activities.length;
             } else {
-                player2Position = Math.min(player2Position + roll, 24);
+                player2Position = (player2Position + roll) % activities.length;
             }
-
+            
             updateBoard();
-
-            // Show activity
-            setTimeout(() => {
-                showActivity();
-            }, 500);
+            setTimeout(() => showActivity(), 500);
         }
-
-        // Show activity popup
-        function showActivity() {
-            const activities = {
-                'mindfulness': ['Take 5 deep breaths', 'Name 3 things you\'re grateful for', 'Close your eyes for 1 minute'],
-                'movement': ['Do 10 jumping jacks', 'Stretch for 2 minutes', 'Dance for 1 minute'],
-                'brain_break': ['Do a quick puzzle', 'Draw a doodle', 'Count backwards from 30'],
-                'self_care': ['Drink water', 'Give a compliment', 'Write something positive']
-            };
-
-            const position = currentPlayer === 1 ? player1Position : player2Position;
-            const square = document.getElementById(`square-${position}`);
-            const type = square.className.split(' ')[1];
-
-            if (type !== 'bonus') {
-                const activity = activities[type][Math.floor(Math.random() * activities[type].length)];
-                document.getElementById('activity-title').textContent = type.replace('_', ' ').toUpperCase();
-                document.getElementById('activity-text').textContent = activity;
-                document.getElementById('overlay').style.display = 'block';
-                document.getElementById('activity-popup').style.display = 'block';
-            } else {
-                alert('🎉 BONUS! Roll again!');
-                completeActivity();
-            }
-        }
-
+        
+        // Show activity on player's side
+function showActivity() {
+    const position = currentPlayer === 1 ? player1Position : player2Position;
+    const activity = activities[position % activities.length];
+    
+    const activityArea = document.getElementById(`p${currentPlayer}-activity-area`);
+    activityArea.style.display = 'block';
+    activityArea.innerHTML = `
+        <div style="background: #e0f2fe; border-left: 4px solid #0ea5e9; padding: 15px; border-radius: 8px; margin-top: 15px;">
+            <div style="font-weight: bold; color: #0369a1; margin-bottom: 8px; font-size: 16px;">
+                🎯 ${activity.type.replace('_', ' ').toUpperCase()}
+            </div>
+            <div style="color: #333; margin-bottom: 12px; font-size: 15px;">
+                ${activity.text}
+            </div>
+            <button class="complete-task-btn" style="background: #0ea5e9;" onclick="completeActivity()">
+                ✅ Complete Activity (+10 pts)
+            </button>
+        </div>
+    `;
+}
+        
         // Complete activity
-        function completeActivity() {
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('activity-popup').style.display = 'none';
+        async function completeActivity() {
+    // Hide the activity area for current player
+    document.getElementById(`p${currentPlayer}-activity-area`).style.display = 'none';
+            
+            try {
+                await fetch('/api/update_points', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({player_id: currentPlayer, points: 10})
+                });
+                
+                const currentPoints = parseInt(document.getElementById(`p${currentPlayer}-points`).textContent);
+                document.getElementById(`p${currentPlayer}-points`).textContent = currentPoints + 10;
+                
+                    const response = await fetch(`/api/get_tasks/${currentPlayer}`);
+const data = await response.json();
 
-            // Add points
-            if (currentPlayer === 1) {
-                player1Score += 10;
-                document.getElementById('player1-points').textContent = player1Score;
-                document.getElementById('player1-completed').textContent = parseInt(document.getElementById('player1-completed').textContent) + 1;
-            } else {
-                player2Score += 10;
-                document.getElementById('player2-points').textContent = player2Score;
-                document.getElementById('player2-completed').textContent = parseInt(document.getElementById('player2-completed').textContent) + 1;
-            }
-
-            // Check win condition
-            if (player1Score >= 100) {
-                alert(`🎉 ${player1.name} WINS!`);
-            } else if (player2Score >= 100) {
-                alert(`🎉 ${player2.name} WINS!`);
-            }
-
-            // Switch turn
-            currentPlayer = currentPlayer === 1 ? 2 : 1;
-            document.getElementById('current-turn').textContent = currentPlayer === 1 ? player1.name : player2.name;
-        }
-
-        // Add task (placeholder)
-        function addTask(player) {
-            const task = prompt(`Enter a task for ${player === 1 ? player1.name : player2.name}:`);
-            if (task) {
-                const taskList = document.getElementById(`player${player}-tasks`);
-                taskList.innerHTML = ''; // Clear "No tasks"
-                const taskItem = document.createElement('div');
-                taskItem.className = 'task-item';
-                taskItem.textContent = task;
-                taskList.appendChild(taskItem);
+if (data.tasks && data.tasks.length > 0) {
+    assignTask(currentPlayer, data.tasks);
+                } else {
+                    document.getElementById(`p${currentPlayer}-task-area`).innerHTML = 
+                        '<div class="waiting-message">🎉 All tasks complete!</div>';
+                }
+                // Clear the turn indicator
+                document.getElementById('turn-indicator').textContent = '';
+            } catch (error) {
+                console.error('Error:', error);
             }
         }
-
-        // Initialize board
-        createBoard();
+        
+        // Initialize
+        window.addEventListener('DOMContentLoaded', function() {
+            createBoard();
+            setTimeout(loadTasks, 500);
+        });
     </script>
 </body>
 </html>

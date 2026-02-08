@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quest & Rest - Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Side Panels */
+        .player-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .player-header {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            color: white;
+            font-size: 24px;
+        }
+
+        .player1-header {
+            background: #667eea;
+        }
+
+        .player2-header {
+            background: #f5576c;
+        }
+
+        .points {
+            font-size: 48px;
+            font-weight: bold;
+            text-align: center;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .task-list {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .task-item {
+            padding: 8px;
+            margin-bottom: 5px;
+            background: white;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .add-task-btn {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .add-task-btn:hover {
+            background: #5568d3;
+        }
+
+        .current-task {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 5px solid #ffc107;
+            margin-top: 15px;
+        }
+
+        /* Center Board */
+        .board-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .game-title {
+            text-align: center;
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .square {
+            aspect-ratio: 1;
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            position: relative;
+            background: white;
+        }
+
+        .square.mindfulness { border-color: #8b5cf6; background: #f3e8ff; }
+        .square.movement { border-color: #10b981; background: #d1fae5; }
+        .square.brain_break { border-color: #f59e0b; background: #fef3c7; }
+        .square.self_care { border-color: #ec4899; background: #fce7f3; }
+        .square.bonus { border-color: #eab308; background: #fef9c3; }
+
+        .square-label {
+            font-size: 10px;
+            margin-top: 5px;
+            text-align: center;
+        }
+
+        .player-piece {
+            position: absolute;
+            top: 5px;
+            font-size: 20px;
+        }
+
+        .dice-section {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .dice-display {
+            font-size: 72px;
+            margin: 20px 0;
+        }
+
+        .dice-btn {
+            padding: 15px 40px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .dice-btn:hover {
+            background: #5568d3;
+            transform: scale(1.05);
+        }
+
+        .dice-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .activity-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+            z-index: 1000;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .activity-popup h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .activity-popup p {
+            font-size: 20px;
+            margin: 20px 0;
+        }
+
+        .done-btn {
+            padding: 15px 30px;
+            background: #48bb78;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .done-btn:hover {
+            background: #38a169;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Player 1 Panel -->
+        <div class="player-panel">
+            <div class="player-header player1-header">
+                <span id="player1-icon">🌟</span>
+                <span id="player1-name">Player 1</span>
+            </div>
+
+            <div class="points" id="player1-points">0</div>
+
+            <div class="section">
+                <h3>📝 My Tasks</h3>
+                <div class="task-list" id="player1-tasks">
+                    <div class="task-item">No tasks yet!</div>
+                </div>
+                <button class="add-task-btn" onclick="addTask(1)">+ Add Task</button>
+            </div>
+
+            <div class="section">
+                <h3>✅ Completed Activities</h3>
+                <div id="player1-completed">0</div>
+            </div>
+
+            <div class="current-task" id="player1-current" style="display:none;">
+                <strong>Current Task:</strong>
+                <p id="player1-task-text"></p>
+            </div>
+        </div>
+
+        <!-- Game Board -->
+        <div class="board-container">
+            <h1 class="game-title">🎮 Quest & Rest</h1>
+
+            <div class="board" id="game-board">
+                <!-- Squares will be generated here -->
+            </div>
+
+            <div class="dice-section">
+                <div class="dice-display" id="dice-display">🎲</div>
+                <button class="dice-btn" id="roll-btn" onclick="rollDice()">Roll Dice</button>
+                <p style="margin-top: 15px; color: #667eea; font-size: 18px;">
+                    <span id="current-turn">Player 1</span>'s Turn
+                </p>
+            </div>
+        </div>
+
+        <!-- Player 2 Panel -->
+        <div class="player-panel">
+            <div class="player-header player2-header">
+                <span id="player2-icon">💎</span>
+                <span id="player2-name">Player 2</span>
+            </div>
+
+            <div class="points" id="player2-points">0</div>
+
+            <div class="section">
+                <h3>📝 My Tasks</h3>
+                <div class="task-list" id="player2-tasks">
+                    <div class="task-item">No tasks yet!</div>
+                </div>
+                <button class="add-task-btn" onclick="addTask(2)">+ Add Task</button>
+            </div>
+
+            <div class="section">
+                <h3>✅ Completed Activities</h3>
+                <div id="player2-completed">0</div>
+            </div>
+
+            <div class="current-task" id="player2-current" style="display:none;">
+                <strong>Current Task:</strong>
+                <p id="player2-task-text"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Popup -->
+    <div class="overlay" id="overlay"></div>
+    <div class="activity-popup" id="activity-popup">
+        <h2 id="activity-title">Mindfulness</h2>
+        <p id="activity-text">Take 5 deep breaths</p>
+        <button class="done-btn" onclick="completeActivity()">✅ I Did It!</button>
+    </div>
+
+    <script>
+        // Load player data
+        const player1 = JSON.parse(localStorage.getItem('player1')) || {name: 'Player 1', icon: '🌟'};
+        const player2 = JSON.parse(localStorage.getItem('player2')) || {name: 'Player 2', icon: '💎'};
+
+        document.getElementById('player1-name').textContent = player1.name;
+        document.getElementById('player1-icon').textContent = player1.icon;
+        document.getElementById('player2-name').textContent = player2.name;
+        document.getElementById('player2-icon').textContent = player2.icon;
+
+        // Game state
+        let currentPlayer = 1;
+        let player1Position = 0;
+        let player2Position = 0;
+        let player1Score = 0;
+        let player2Score = 0;
+
+        // Square types
+        const squareTypes = ['mindfulness', 'movement', 'brain_break', 'self_care', 'bonus'];
+        const squareIcons = {
+            'mindfulness': '🧘',
+            'movement': '🏃',
+            'brain_break': '🧠',
+            'self_care': '💆',
+            'bonus': '⭐'
+        };
+
+        // Generate board
+        function createBoard() {
+            const board = document.getElementById('game-board');
+            for (let i = 0; i < 25; i++) {
+                const square = document.createElement('div');
+                const type = squareTypes[Math.floor(Math.random() * squareTypes.length)];
+                square.className = `square ${type}`;
+                square.innerHTML = `
+                    ${squareIcons[type]}
+                    <div class="square-label">${type.replace('_', ' ')}</div>
+                `;
+                square.id = `square-${i}`;
+                board.appendChild(square);
+            }
+            updateBoard();
+        }
+
+        // Update player positions on board
+        function updateBoard() {
+            // Clear existing pieces
+            document.querySelectorAll('.player-piece').forEach(p => p.remove());
+
+            // Add player 1
+            const p1Square = document.getElementById(`square-${player1Position}`);
+            if (p1Square) {
+                const piece = document.createElement('div');
+                piece.className = 'player-piece';
+                piece.textContent = player1.icon;
+                piece.style.left = '5px';
+                p1Square.appendChild(piece);
+            }
+
+            // Add player 2
+            const p2Square = document.getElementById(`square-${player2Position}`);
+            if (p2Square) {
+                const piece = document.createElement('div');
+                piece.className = 'player-piece';
+                piece.textContent = player2.icon;
+                piece.style.right = '5px';
+                p2Square.appendChild(piece);
+            }
+        }
+
+        // Roll dice
+        function rollDice() {
+            const roll = Math.floor(Math.random() * 6) + 1;
+            document.getElementById('dice-display').textContent = roll;
+
+            // Move player
+            if (currentPlayer === 1) {
+                player1Position = Math.min(player1Position + roll, 24);
+            } else {
+                player2Position = Math.min(player2Position + roll, 24);
+            }
+
+            updateBoard();
+
+            // Show activity
+            setTimeout(() => {
+                showActivity();
+            }, 500);
+        }
+
+        // Show activity popup
+        function showActivity() {
+            const activities = {
+                'mindfulness': ['Take 5 deep breaths', 'Name 3 things you\'re grateful for', 'Close your eyes for 1 minute'],
+                'movement': ['Do 10 jumping jacks', 'Stretch for 2 minutes', 'Dance for 1 minute'],
+                'brain_break': ['Do a quick puzzle', 'Draw a doodle', 'Count backwards from 30'],
+                'self_care': ['Drink water', 'Give a compliment', 'Write something positive']
+            };
+
+            const position = currentPlayer === 1 ? player1Position : player2Position;
+            const square = document.getElementById(`square-${position}`);
+            const type = square.className.split(' ')[1];
+
+            if (type !== 'bonus') {
+                const activity = activities[type][Math.floor(Math.random() * activities[type].length)];
+                document.getElementById('activity-title').textContent = type.replace('_', ' ').toUpperCase();
+                document.getElementById('activity-text').textContent = activity;
+                document.getElementById('overlay').style.display = 'block';
+                document.getElementById('activity-popup').style.display = 'block';
+            } else {
+                alert('🎉 BONUS! Roll again!');
+                completeActivity();
+            }
+        }
+
+        // Complete activity
+        function completeActivity() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('activity-popup').style.display = 'none';
+
+            // Add points
+            if (currentPlayer === 1) {
+                player1Score += 10;
+                document.getElementById('player1-points').textContent = player1Score;
+                document.getElementById('player1-completed').textContent = parseInt(document.getElementById('player1-completed').textContent) + 1;
+            } else {
+                player2Score += 10;
+                document.getElementById('player2-points').textContent = player2Score;
+                document.getElementById('player2-completed').textContent = parseInt(document.getElementById('player2-completed').textContent) + 1;
+            }
+
+            // Check win condition
+            if (player1Score >= 100) {
+                alert(`🎉 ${player1.name} WINS!`);
+            } else if (player2Score >= 100) {
+                alert(`🎉 ${player2.name} WINS!`);
+            }
+
+            // Switch turn
+            currentPlayer = currentPlayer === 1 ? 2 : 1;
+            document.getElementById('current-turn').textContent = currentPlayer === 1 ? player1.name : player2.name;
+        }
+
+        // Add task (placeholder)
+        function addTask(player) {
+            const task = prompt(`Enter a task for ${player === 1 ? player1.name : player2.name}:`);
+            if (task) {
+                const taskList = document.getElementById(`player${player}-tasks`);
+                taskList.innerHTML = ''; // Clear "No tasks"
+                const taskItem = document.createElement('div');
+                taskItem.className = 'task-item';
+                taskItem.textContent = task;
+                taskList.appendChild(taskItem);
+            }
+        }
+
+        // Initialize board
+        createBoard();
+    </script>
+</body>
+</html>
