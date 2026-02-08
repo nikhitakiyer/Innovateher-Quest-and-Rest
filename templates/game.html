@@ -3,18 +3,20 @@
 <head>
     <title>Quest & Rest - Game Board</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-            background: #bdbbf1;
-            min-height: 100vh;
-            padding: 20px;
-        }
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap');
+    
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
+        background: #bdbbf1;
+        min-height: 100vh;
+        padding: 20px;
+    }
         
         .game-container {
             max-width: 1600px;
@@ -173,10 +175,11 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #bdbbf1;
             border-radius: 15px;
             padding: 30px;
             color: white;
+            font-size: 30px;
         }
         
         .center-logo {
@@ -185,9 +188,10 @@
         }
         
         .center-title {
-            font-size: 32px;
+            font-size: 90px;
             font-weight: bold;
             margin-bottom: 10px;
+            text-align: center;
         }
         
         .turn-indicator {
@@ -303,7 +307,7 @@
         
         <!-- Board Area -->
         <div class="board-area">
-            <h1 class="board-title">Quest & Rest</h1>
+            
             
             <div class="board-wrapper">
                 <div class="board" id="game-board">
@@ -434,7 +438,6 @@
             center.style.gridColumn = '2 / 8';
             center.className = 'center-area';
             center.innerHTML = `
-                <div class="center-logo">🎮</div>
                 <div class="center-title">Quest & Rest</div>
                 <div class="turn-indicator" id="turn-indicator"></div>
             `;
@@ -637,7 +640,7 @@ function showActivity() {
                 const finalPoints = currentPoints + 10;
                 if (finalPoints >= winningScore) {
                     setTimeout(() => {
-                        const winner = player === 1 ? player1 : player2;
+                        const winner = currentPlayer === 1 ? player1 : player2;
 window.location.href = `/winner?name=${encodeURIComponent(winner.name)}&points=${finalPoints}&icon=${encodeURIComponent(winner.icon)}`;
                     }, 500);
                     return; // Stop execution
