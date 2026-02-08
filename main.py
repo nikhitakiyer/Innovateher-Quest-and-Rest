@@ -61,6 +61,11 @@ def api_update_points():
 def winner():
     return render_template('winner.html')
 
+# Rules page
+@app.route('/rules')
+def rules():
+    return render_template('rules.html')
+
 if __name__ == '__main__':
     print("Quest & Rest Game Starting...")
     app.run(host='0.0.0.0', port=8080, debug=True)
