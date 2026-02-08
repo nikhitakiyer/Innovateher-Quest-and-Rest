@@ -1,5 +1,4 @@
-HOW TO  RUN
-Windows:
+HOW TO  RUN (Windows):
 1. Open Command Prompt and install flask and Python
   - pip install flask (installs flask)
 2. Install repository as zip (code --> Download Zip)
