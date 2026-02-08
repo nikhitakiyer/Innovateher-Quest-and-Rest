@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Winner! - Quest & Rest</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .winner-container {
+            background: white;
+            padding: 60px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            text-align: center;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .trophy {
+            font-size: 120px;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 48px;
+            margin: 20px 0;
+        }
+
+        .winner-name {
+            font-size: 64px;
+            color: #fbbf24;
+            font-weight: bold;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .points {
+            font-size: 36px;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        .home-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 20px 50px;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.3s;
+        }
+
+        .home-btn:hover {
+            background: #5568d3;
+            transform: scale(1.05);
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #fbbf24;
+            position: absolute;
+            animation: fall 3s linear infinite;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="winner-container">
+        <div class="trophy">🏆</div>
+        <h1>WINNER!</h1>
+        <div class="winner-name" id="winner-name">Player 1</div>
+        <div class="points" id="winner-points">100 Points</div>
+        <p style="font-size: 24px; color: #666; margin: 20px 0;">
+            🎉 Congratulations! You balanced productivity with self-care! 🎉
+        </p>
+        <button class="home-btn" onclick="goHome()">🏠 Play Again</button>
+    </div>
+
+    <script>
+        // Get winner info from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const winnerName = urlParams.get('name') || 'Player';
+        const winnerPoints = urlParams.get('points') || '0';
+        const winnerIcon = urlParams.get('icon') || '🌟';
+
+        document.getElementById('winner-name').textContent = winnerIcon + ' ' + winnerName;
+        document.getElementById('winner-points').textContent = winnerPoints + ' Points!';
+
+        // Create confetti
+        for (let i = 0; i < 50; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.animationDelay = Math.random() * 3 + 's';
+            confetti.style.background = ['#fbbf24', '#667eea', '#ec4899', '#10b981'][Math.floor(Math.random() * 4)];
+            document.body.appendChild(confetti);
+        }
+
+        function goHome() {
+            // Clear localStorage
+            localStorage.clear();
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>

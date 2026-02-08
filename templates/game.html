@@ -554,24 +554,28 @@
                 });
                 
                 const currentPoints = parseInt(document.getElementById(`p${player}-points`).textContent);
-                document.getElementById(`p${player}-points`).textContent = currentPoints + points;
-                document.getElementById(`p${player}-task-area`).innerHTML = 
-                    '<div class="waiting-message">✅ Task complete! You can roll the dice now.</div>';
-                
-                currentPlayer = player;
-                document.getElementById('roll-btn').disabled = false;
-                document.getElementById('turn-indicator').textContent = `${player === 1 ? player1.name : player2.name}'s Turn to Roll`;
+const finalPoints = currentPoints + points;
+document.getElementById(`p${player}-points`).textContent = finalPoints;
+
+// Check for winner IMMEDIATELY
+if (finalPoints >= winningScore) {
+    setTimeout(() => {
+        const winner = currentPlayer === 1 ? player1 : player2;
+window.location.href = `/winner?name=${encodeURIComponent(winner.name)}&points=${finalPoints}&icon=${encodeURIComponent(winner.icon)}`;
+    }, 500);
+    return; // Stop here
+}
+
+document.getElementById(`p${player}-task-area`).innerHTML = 
+    '<div class="waiting-message">✅ Task complete! You can roll the dice now.</div>';
+
+currentPlayer = player;
+document.getElementById('roll-btn').disabled = false;
+document.getElementById('turn-indicator').textContent = `${player === 1 ? player1.name : player2.name}'s Turn to Roll`;
             } catch (error) {
                 console.error('Error completing task:', error);
             }
-            // Check for winner
-            const finalPoints = currentPoints + points;
-            if (finalPoints >= winningScore) {
-                setTimeout(() => {
-                    alert(`🎉🏆 ${player === 1 ? player1.name : player2.name} WINS with ${finalPoints} points! 🏆🎉`);
-                    location.reload(); // Restart game
-                }, 500);
-            }
+            
         }
         
         // Roll dice
@@ -633,8 +637,8 @@ function showActivity() {
                 const finalPoints = currentPoints + 10;
                 if (finalPoints >= winningScore) {
                     setTimeout(() => {
-                        alert(`🎉🏆 ${currentPlayer === 1 ? player1.name : player2.name} WINS with ${finalPoints} points! 🏆🎉`);
-                        location.reload(); // Restart game
+                        const winner = player === 1 ? player1 : player2;
+window.location.href = `/winner?name=${encodeURIComponent(winner.name)}&points=${finalPoints}&icon=${encodeURIComponent(winner.icon)}`;
                     }, 500);
                     return; // Stop execution
                 }

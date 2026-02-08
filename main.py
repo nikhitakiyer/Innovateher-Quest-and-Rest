@@ -56,6 +56,11 @@ def api_update_points():
     update_points(data['player_id'], data['points'])
     return jsonify({"status": "success"})
 
+# Winner page
+@app.route('/winner')
+def winner():
+    return render_template('winner.html')
+
 if __name__ == '__main__':
     print("Quest & Rest Game Starting...")
     app.run(host='0.0.0.0', port=8080, debug=True)
