@@ -32,6 +32,16 @@
             transform: translateY(-2px);
         }
 
+            input {
+                -webkit-autofill: none;
+            }
+
+            input:-webkit-autofill,
+            input:-webkit-autofill:hover,
+            input:-webkit-autofill:focus {
+                -webkit-box-shadow: 0 0 0px 1000px white inset;
+            }
+
         .score-selected {
             background: #667eea;
             color: white;
@@ -150,7 +160,7 @@
             <div class="player-section">
                 <h3>Player 2</h3>
                 <label>Name:</label>
-                <input type="text" id="player1-name" placeholder="Enter Player 2 name" required autocomplete="off">
+                <input type="text" id="player2-name" placeholder="Enter Player 2 name" required autocomplete="off">
 
                 <label>Choose Your Icon:</label>
                 <div class="icon-selector">
