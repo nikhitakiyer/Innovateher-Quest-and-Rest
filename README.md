@@ -1,3 +1,12 @@
+HOW TO  RUN
+Windows:
+1. Open Command Prompt and install flask and Python
+  - pip install flask (installs flask)
+2. Install repository as zip (code --> Download Zip)
+3. Extract files, right click --> open in Terminal
+4. python main.py
+5. Enter in browser: http://127.0.0.1:8080/
+
 Game Rules
 
 No trash-talking
