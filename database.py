@@ -1,6 +1,7 @@
 import sqlite3
 from datetime import datetime
 
+
 def init_db():
     """Initialize the database with tables"""
     conn = sqlite3.connect('game.db')
