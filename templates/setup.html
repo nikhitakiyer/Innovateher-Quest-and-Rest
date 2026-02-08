@@ -13,6 +13,28 @@
             align-items: center;
             min-height: 100vh;
         }
+        .score-btn {
+            padding: 12px 24px;
+            border: 2px solid #ddd;
+            background: white;
+            color: #333;  /* ADD THIS LINE */
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .score-btn:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .score-selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
 
         .setup-container {
             background: white;
@@ -137,7 +159,16 @@
                 </div>
                 <input type="hidden" id="player2-icon" value="💎">
             </div>
-
+            <div style="background: white; padding: 25px; border-radius: 15px; margin-top: 30px; text-align: center;">
+                <h3 style="color: #667eea; margin-bottom: 15px;">🏆 Set Winning Score</h3>
+                <p style="color: #666; margin-bottom: 15px;">First player to reach this score wins!</p>
+                <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 10px;">
+                    <button type="button" onclick="setWinScore(50)" class="score-btn" id="score-50">50 Points</button>
+<button type="button" onclick="setWinScore(100)" class="score-btn score-selected" id="score-100">100 Points</button>
+<button type="button" onclick="setWinScore(150)" class="score-btn" id="score-150">150 Points</button>
+                </div>
+                <p style="color: #999; font-size: 14px;">Selected: <span id="selected-score" style="color: #667eea; font-weight: bold;">100</span> points</p>
+            </div>
             <button type="submit">Start Playing! 🎲</button>
         </form>
     </div>
@@ -163,10 +194,27 @@
 
         // Set default selections
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelector('.player-section:nth-child(2) .icon-option:first-child').classList.add('selected');
-            document.querySelector('.player-section:nth-child(3) .icon-option:first-child').classList.add('selected');
-        });
+            // Select first icon for Player 1
+            document.querySelectorAll('.player-section')[0].querySelector('.icon-option:first-child').classList.add('selected');
 
+            // Select fourth icon for Player 2 (💎)
+            document.querySelectorAll('.player-section')[1].querySelectorAll('.icon-option')[3].classList.add('selected');
+        });
+        // Winning score selection
+        let winningScore = 100; // Default
+
+        function setWinScore(score) {
+            winningScore = score;
+
+            // Update UI
+            document.querySelectorAll('.score-btn').forEach(btn => {
+                btn.classList.remove('score-selected');
+            });
+            document.getElementById(`score-${score}`).classList.add('score-selected');
+            document.getElementById('selected-score').textContent = score;
+        }
+
+        
         // Form submission
         document.getElementById('setupForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -181,9 +229,10 @@
                 icon: document.getElementById('player2-icon').value
             };
 
-            // Save to localStorage
+            /// Save to localStorage
             localStorage.setItem('player1', JSON.stringify(player1));
             localStorage.setItem('player2', JSON.stringify(player2));
+            localStorage.setItem('winningScore', winningScore);
 
             // Go to game page
             window.location.href = '/tasks';

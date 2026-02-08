@@ -11,7 +11,7 @@
         
         body {
             font-family: 'Comic Sans MS', cursive, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #bdbbf1;
             min-height: 100vh;
             padding: 20px;
         }
@@ -51,7 +51,7 @@
         }
         
         .player2-header {
-            background: #f5576c;
+            background: #667eea;
         }
         
         .points-display {
@@ -349,6 +349,9 @@
         // Load player info
         const player1 = JSON.parse(localStorage.getItem('player1')) || {name: 'Player 1', icon: '🌟'};
         const player2 = JSON.parse(localStorage.getItem('player2')) || {name: 'Player 2', icon: '💎'};
+        // Get winning score
+        const winningScore = parseInt(localStorage.getItem('winningScore')) || 100;
+        console.log('Winning score:', winningScore); // Debug
         
         document.getElementById('p1-name').textContent = player1.name;
         document.getElementById('p1-icon').textContent = player1.icon;
@@ -561,6 +564,14 @@
             } catch (error) {
                 console.error('Error completing task:', error);
             }
+            // Check for winner
+            const finalPoints = currentPoints + points;
+            if (finalPoints >= winningScore) {
+                setTimeout(() => {
+                    alert(`🎉🏆 ${player === 1 ? player1.name : player2.name} WINS with ${finalPoints} points! 🏆🎉`);
+                    location.reload(); // Restart game
+                }, 500);
+            }
         }
         
         // Roll dice
@@ -613,10 +624,20 @@ function showActivity() {
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({player_id: currentPlayer, points: 10})
                 });
-                
+
+        
+
                 const currentPoints = parseInt(document.getElementById(`p${currentPlayer}-points`).textContent);
                 document.getElementById(`p${currentPlayer}-points`).textContent = currentPoints + 10;
-                
+//ADD THIS:
+                const finalPoints = currentPoints + 10;
+                if (finalPoints >= winningScore) {
+                    setTimeout(() => {
+                        alert(`🎉🏆 ${currentPlayer === 1 ? player1.name : player2.name} WINS with ${finalPoints} points! 🏆🎉`);
+                        location.reload(); // Restart game
+                    }, 500);
+                    return; // Stop execution
+                }
                     const response = await fetch(`/api/get_tasks/${currentPlayer}`);
 const data = await response.json();
 
